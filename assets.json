@@ -1,0 +1,17 @@
+[
+  {"id":"manuel-pharmaciens-2025-08-26","title":"Manuel des pharmaciens 2025-08-26","type":"manuel","path":"/sources/manuel-pharmaciens_2025-08-26.pdf","citation":"Manuel des pharmaciens 2025-08-26","tags":["actes cliniques","interventions","facturation","suivi"]},
+  {"id":"pl31-opq","title":"Resume PL31 OPQ","type":"loi","path":"/sources/Resume_PL31_OPQ.pdf","citation":"Resume PL31 OPQ","tags":["Loi 31","champ d'exercice","conditions"]},
+  {"id":"loi-41-31","title":"Loi 41 et 31 - version coloree automne 2023","type":"loi","path":"/sources/Loi-41-et-31-version-coloree-vAutomne-2023.pdf","citation":"Loi 41 et 31 - version coloree automne 2023","tags":["Loi 41","Loi 31","actes admissibles"]},
+  {"id":"fr-sacs-actes","title":"Tableau resume des actes professionnels du pharmacien","type":"actes","path":"/sources/fr-sacs-tableau-resume-des-actes-professionnels-du-pharmacien-v1.pdf","citation":"Tableau resume des actes professionnels du pharmacien","tags":["codes","actes professionnels","interventions"]},
+  {"id":"hta-ajustement","title":"HTA - boite a outils","type":"ajustement","path":"/sources/ajustements/HTA-boite-a-outil.pdf","citation":"HTA - boite a outils","tags":["HTA","hypertension","ajustement","suivi"]},
+  {"id":"dm-ajustement","title":"Diabete - boite a outils","type":"ajustement","path":"/sources/ajustements/DM-boite-a-outil.pdf","citation":"Diabete - boite a outils","tags":["diabete","ajustement","HbA1c"]},
+  {"id":"asthme-ajustement","title":"Asthme - boite a outils","type":"ajustement","path":"/sources/ajustements/Asthme-boite-a-outil.pdf","citation":"Asthme - boite a outils","tags":["asthme","suivi","mesures non pharmacologiques"]},
+  {"id":"anticoag-ajustement","title":"Anticoagulation - boite a outils","type":"ajustement","path":"/sources/ajustements/Anticoag-boite-a-outil.pdf","citation":"Anticoagulation - boite a outils","tags":["anticoagulation","INR","suivi"]},
+  {"id":"dlp-ajustement","title":"Dyslipidemie - boite a outils","type":"ajustement","path":"/sources/ajustements/DLP-boite-a-outil.pdf","citation":"Dyslipidemie - boite a outils","tags":["DLP","dyslipidemie","cardiovasculaire","suivi"]},
+  {"id":"mpoc-ajustement","title":"MPOC - boite a outils","type":"ajustement","path":"/sources/ajustements/MPOC-boite-a-outil.pdf","citation":"MPOC - boite a outils","tags":["MPOC","inhalateurs","suivi"]},
+  {"id":"hypot4-ajustement","title":"Hypothyroidie - boite a outils","type":"ajustement","path":"/sources/ajustements/HypoT4-boite-a-outil.pdf","citation":"Hypothyroidie - boite a outils","tags":["hypothyroidie","TSH","ajustement"]},
+  {"id":"migraine-ajustement","title":"Migraine - boite a outils","type":"ajustement","path":"/sources/ajustements/Migraine-boite-a-outil.pdf","citation":"Migraine - boite a outils","tags":["migraine","suivi","optimisation"]},
+  {"id":"tdah-ajustement","title":"TDAH - boite a outils","type":"ajustement","path":"/sources/ajustements/TDAH-boite-a-outil.pdf","citation":"TDAH - boite a outils","tags":["TDAH","suivi","optimisation"]},
+  {"id":"condition-mineure","title":"Conditions mineures - resume","type":"conditions","path":"/sources/condition_mineur_resume.pdf","citation":"Conditions mineures - resume","tags":["conditions mineures","admissibilite","prescription"]},
+  {"id":"post-hospitalisation","title":"Post-hospitalisation","type":"suivi","path":"/sources/post_hospitalisation.pdf","citation":"Post-hospitalisation","tags":["suivi","transition de soins","conciliation"]}
+]

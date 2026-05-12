@@ -1,0 +1,30 @@
+{
+  "name": "aipharmagent",
+  "version": "0.1.0",
+  "description": "Clinical-pharmacy DKG v10 working/shared-memory integration with OpenClaw-backed evidence drafting.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "aipharmagent-verify": "bounty/verify-readiness.mjs",
+    "aipharmagent-stage": "kg-pipeline/scripts/stage_working_memory.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check app.js && node --check kg-rag.mjs && node --check bounty/verify-readiness.mjs && node --check kg-pipeline/scripts/stage_working_memory.mjs",
+    "validate:jsonld": "python3 kg-pipeline/scripts/validate_jsonld.py --jsonld kg/jsonld --schema kg/schema/pharmagent.schema.json --reviews kg/reviews",
+    "index:keyword": "python3 kg-pipeline/scripts/build_embeddings.py --keyword-only --jsonld kg/jsonld --out kg/index/entities.embeddings.json",
+    "verify:bounty": "node bounty/verify-readiness.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brxtrac/aipharmagent.git"
+  },
+  "keywords": [
+    "dkg-v10",
+    "origintrail",
+    "openclaw",
+    "pharmacy",
+    "working-memory",
+    "shared-memory"
+  ]
+}

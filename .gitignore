@@ -1,0 +1,23 @@
+.DS_Store
+node_modules/
+npm-debug.log*
+.env
+.env.*
+!.env.example
+
+# Python environments and caches
+kg-pipeline/.venv/
+__pycache__/
+*.pyc
+
+# Runtime/generated indexes and parser logs
+kg/index/entities.embeddings.json
+kg/index/parse-remaining.log
+kg/index/parse-remaining-state.json
+
+# Local review outputs may contain operator notes
+kg/reviews/*.review.json
+
+# Secrets/config from local DKG/OpenClaw installations must never be committed
+.dkg/
+.openclaw/

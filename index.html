@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PharmAgent</title>
+  <meta name="description" content="Assistant clinique pour pharmaciens: notes d'intervention concises, pratiques et appuyées par les documents professionnels disponibles.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">PharmAgent</p>
+      <h1>Assistant clinique pour pharmaciens.</h1>
+      <p class="lead">Rédigez une note d'intervention concise à partir d'un cas patient, de documents joints et de sources professionnelles locales.</p>
+      <div class="status-row" aria-label="Caractéristiques principales">
+        <span>Réponse structurée</span>
+        <span>Sources locales</span>
+        <span>Refus si données insuffisantes</span>
+      </div>
+    </section>
+
+    <section class="workspace">
+    <section class="panel question-panel">
+      <form id="caseForm">
+        <div class="panel-head">
+          <div>
+            <h2>Cas clinique</h2>
+            <p>Décrivez la situation comme dans votre dossier pharmacien.</p>
+          </div>
+        </div>
+        <div class="form-section">
+          <label for="question">Scénario patient</label>
+          <textarea id="question" name="question" rows="8" required placeholder="Ex. Patient de 76 ans, TA 188/80, amlodipine 2,5 mg die. Objectif: note d'intervention et suivi."></textarea>
+          <p class="hint">Incluez seulement les données nécessaires: âge, indication, mesures, médicaments, allergies, DFG/labos pertinents et question clinique.</p>
+        </div>
+
+        <div class="form-section upload-box">
+          <label for="attachments">Documents du scénario (optionnel)</label>
+          <input id="attachments" name="attachments" type="file" accept="image/png,image/jpeg,application/pdf" multiple>
+          <p class="hint">PDF, JPEG ou PNG. Les fichiers servent uniquement à compléter le scénario clinique.</p>
+          <div id="attachmentList" class="attachment-list" aria-live="polite"></div>
+        </div>
+        <button type="submit">Générer la note</button>
+      </form>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="output-head">
+        <div>
+          <h2>Note proposée</h2>
+          <p>À réviser selon votre jugement clinique avant consignation.</p>
+        </div>
+        <button id="copyNote" type="button" class="secondary">Copier</button>
+      </div>
+      <div id="output" class="output empty-state">
+        <strong>Prêt à analyser un cas.</strong>
+        <span>La note apparaîtra ici avec les sections Collecte de données, Analyse, Intervention et recommandations, puis Sources.</span>
+      </div>
+    </section>
+    </section>
+
+    <section class="fine-print">
+      <p>PharmAgent soutient la rédaction clinique et ne remplace pas le jugement professionnel du pharmacien. Les recommandations sont limitées aux sources locales retrouvées; en l'absence de données pertinentes, l'outil doit refuser de conclure.</p>
+    </section>
+
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
