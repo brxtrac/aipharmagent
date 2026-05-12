@@ -1,23 +1,32 @@
 # PharmAgent
 
-PharmAgent is a clinical-pharmacy assistant and OriginTrail DKG v10 integration. It converts pharmacist-owned guideline/toolbox PDFs into JSON-LD/RDF source excerpts, stages them to the `PharmAgent` context graph shared memory, retrieves relevant evidence for a patient case, and uses an OpenClaw OAuth-backed LLM to draft a concise French chart note.
+PharmAgent is a clinical note assistant for pharmacists. It helps turn a patient scenario into a concise French intervention note that can be reviewed and copied into the pharmacy file.
 
-PharmAgent is documentation support for pharmacists. It does not replace professional judgment and refuses to provide a recommendation when local evidence is missing.
+The tool is designed for practical pharmacotherapy questions: hypertension, diabetes, anticoagulation, asthma, dyslipidemia, hypothyroidism, migraine, COPD/MPOC, ADHD/TDAH, and other supported domains as the knowledge base grows. PharmAgent retrieves evidence from local professional documents before drafting; if it cannot find relevant local knowledge, it refuses to provide a clinical recommendation.
 
-## DKG v10 Bounty Fit
+PharmAgent supports documentation. It does not replace the pharmacist's clinical judgment.
 
-Round 1 of the OriginTrail DKG v10 bounty focuses on Working Memory and Shared Memory integrations for LLM-wiki / autoresearch agents. PharmAgent demonstrates that flow for clinical pharmacy:
+## Why It Exists
 
-- Working memory: transient patient case and optional attachment metadata.
-- Shared memory: validated PDF-derived JSON-LD/RDF guideline excerpts staged to `did:dkg:context-graph:PharmAgent/_shared_memory`.
-- Agent integration: OpenClaw OAuth-backed drafting over retrieved evidence.
-- Safety policy: no relevant local evidence means no clinical recommendation.
+Pharmacists often need to document a clear intervention quickly while still grounding the recommendation in clinical references. The goal of PharmAgent is to reduce drafting friction without turning the answer into a generic chatbot response.
 
-See [`bounty/SUBMISSION.md`](bounty/SUBMISSION.md) and [`bounty/dkg-v10-integration.json`](bounty/dkg-v10-integration.json).
+The expected output is always structured for charting:
 
-## Current Corpus
+- **Collecte de données** — only the facts provided in the case.
+- **Analyse** — targeted clinical reasoning for this patient.
+- **Intervention et recommandations** — the recommended plan, monitoring, and follow-up.
+- **Sources** — the main references found in the retrieved documents.
 
-The demo corpus includes 9 parsed French clinical toolboxes:
+## How It Works
+
+1. The pharmacist enters a patient scenario and may attach supporting documents.
+2. PharmAgent retrieves relevant excerpts from the local clinical knowledge base.
+3. If the retrieved evidence is sufficient, an OpenClaw-authenticated model drafts the note.
+4. If the evidence is insufficient, PharmAgent returns a refusal note instead of guessing.
+
+## Clinical Knowledge Base
+
+The current demo corpus includes parsed French clinical toolboxes covering:
 
 - anticoagulation
 - asthme
@@ -29,18 +38,18 @@ The demo corpus includes 9 parsed French clinical toolboxes:
 - MPOC
 - TDAH
 
-The current keyword RAG index contains 522 records when generated locally.
+The PDF-derived content is converted into JSON-LD/RDF source excerpts. Generated clinical source entries are marked for human review before any verified-memory promotion.
 
-## Run Locally
+## Local Development
 
 ```bash
 npm run check
 PORT=3088 npm start
 ```
 
-The public app expects a local OpenClaw installation already authenticated with OAuth for default generation.
+The default generation path expects a local OpenClaw installation already authenticated with OAuth.
 
-## Validate and Stage Knowledge
+## Knowledge Pipeline
 
 Install Python dependencies:
 
@@ -55,26 +64,27 @@ Validate JSON-LD:
 kg-pipeline/.venv/bin/python kg-pipeline/scripts/validate_jsonld.py
 ```
 
-Build keyword index:
+Build the keyword retrieval index:
 
 ```bash
 kg-pipeline/.venv/bin/python kg-pipeline/scripts/build_embeddings.py --keyword-only
 ```
 
-Stage to DKG shared memory:
+Stage reviewed knowledge to the local graph memory layer:
 
 ```bash
 DKG_AUTH_TOKEN=<token> node kg-pipeline/scripts/stage_working_memory.mjs
 ```
 
-Run bounty readiness verification:
+Run readiness checks:
 
 ```bash
 node bounty/verify-readiness.mjs
 ```
 
-## Security Notes
+## Safety and Privacy Notes
 
-- Do not commit local `.dkg`, `.openclaw`, `.env`, API keys, OAuth tokens, or generated embeddings containing operational data.
-- JSON-LD clinical excerpts are marked `needsHumanReview: true` and `reviewStatus: human_review`.
-- Verified/on-chain memory promotion is a separate curator review step.
+- PharmAgent is for pharmacist documentation support, not autonomous prescribing.
+- Recommendations are limited by the quality and coverage of the local knowledge base.
+- Unsupported cases should return a clear refusal rather than an LLM-only answer.
+- Do not commit local `.dkg`, `.openclaw`, `.env`, API keys, OAuth tokens, embeddings, or runtime logs.
