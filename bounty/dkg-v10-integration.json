@@ -1,0 +1,30 @@
+{
+  "name": "PharmAgent",
+  "type": "DKG v10 Working Memory and Shared Memory integration",
+  "website": "https://aipharmagent.com",
+  "contextGraph": "PharmAgent",
+  "theme": "Clinical pharmacist LLM-wiki / autoresearch workflow over verifiable drug-therapy guidance",
+  "summary": "PharmAgent turns pharmacist case narratives and local guideline excerpts into copy-paste clinical notes. Parsed PDF guidance is converted to JSON-LD/RDF, staged into DKG v10 working/shared memory, retrieved by RAG, and used by an OpenClaw OAuth-backed LLM to draft evidence-grounded notes with refusal when local knowledge is missing.",
+  "memoryLayers": {
+    "workingMemory": "Per-session pharmacist case text and optional attachment metadata are used transiently for generation.",
+    "sharedMemory": "Validated PharmAgent JSON-LD guideline excerpts are staged to did:dkg:context-graph:PharmAgent/_shared_memory.",
+    "verifiedMemoryRoadmap": "Human-reviewed guideline assets can be promoted to verified memory/on-chain DKG once DKG v10 publish review is enabled for this context graph. The staging script supports --publish when the daemon/curator flow is ready."
+  },
+  "currentArtifacts": {
+    "jsonldFiles": 9,
+    "ragRecords": 522,
+    "sourceDirectory": "/root/npm/data/aipharmagent.com/kg/jsonld",
+    "stagingScript": "/root/npm/data/aipharmagent.com/kg-pipeline/scripts/stage_working_memory.mjs",
+    "verificationScript": "/root/npm/data/aipharmagent.com/bounty/verify-readiness.mjs"
+  },
+  "agentIntegration": {
+    "agent": "OpenClaw",
+    "auth": "OpenClaw OAuth / configured local agent",
+    "workflow": "retrieve local DKG-backed evidence, call OpenClaw agent, return four-section pharmacist note"
+  },
+  "safety": {
+    "clinicalJudgment": "Output is documentation support and does not replace pharmacist judgment.",
+    "noEvidencePolicy": "If local evidence retrieval returns no relevant records, PharmAgent refuses to produce a clinical recommendation.",
+    "humanReview": "Generated JSON-LD clinical source excerpts are marked needsHumanReview=true and reviewStatus=human_review."
+  }
+}
