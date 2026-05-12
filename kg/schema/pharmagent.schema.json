@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aipharmagent.com/schema/pharmagent.schema.json",
+  "type": "object",
+  "required": ["@context", "@graph"],
+  "properties": {
+    "@context": { "type": ["object", "string"] },
+    "@graph": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/entity" }
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "required": ["@id", "@type"],
+      "properties": {
+        "@id": { "type": "string", "minLength": 8 },
+        "@type": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          ]
+        },
+        "title": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "sourceDocument": { "$ref": "#/$defs/ref" },
+        "sourceExcerpt": {
+          "oneOf": [
+            { "$ref": "#/$defs/ref" },
+            { "type": "array", "items": { "$ref": "#/$defs/ref" } }
+          ]
+        },
+        "sourcePage": { "type": ["integer", "string"] },
+        "sourceSection": { "type": "string" },
+        "sourceQuote": { "type": "string" },
+        "recommendation": { "type": "string" },
+        "intervention": { "type": "string" },
+        "requiresMonitoring": { "$ref": "#/$defs/stringOrList" },
+        "requiresFollowUp": { "$ref": "#/$defs/stringOrList" },
+        "followUpInterval": { "type": "string" },
+        "needsHumanReview": { "type": "boolean" },
+        "reviewStatus": { "enum": ["draft", "pass", "needs_fix", "reject", "human_review"] },
+        "publishStatus": { "enum": ["local_only", "ready_for_working_memory", "in_working_memory", "ready_for_dkg", "published"] }
+      },
+      "additionalProperties": true
+    },
+    "ref": {
+      "type": "object",
+      "required": ["@id"],
+      "properties": { "@id": { "type": "string" } },
+      "additionalProperties": false
+    },
+    "stringOrList": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    }
+  }
+}

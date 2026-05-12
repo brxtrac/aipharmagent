@@ -1,0 +1,281 @@
+{
+  "@context": "/kg/schema/pharmagent.context.jsonld",
+  "@graph": [
+    {
+      "@id": "urn:pharmagent:anticoag:doc",
+      "@type": "pharm:ClinicalDocument",
+      "name": "Boite a outils - ajustement anticoagulation",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "unknown",
+      "sourceSection": "",
+      "sourceQuote": "Boîte à outils - ajustement de la warfarine Version - 9 septembre 2023",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "description": "Document local sur ajustement de la warfarine, suivi du RNI et situations particulieres."
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-initiation-suivi-rni",
+      "@type": "pharm:FollowUpProtocol",
+      "name": "Initiation warfarine - frequence RNI",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "debut traitement",
+      "sourceSection": "Traitements",
+      "sourceQuote": "Généralement, en début de traitement, le patient doit faire des RNI 2-3 fois par semaine. Il est normal de demander des RNI la fin de semaine lors de la première semaine. Ensuite, quand la dose se stabilise, on espace graduellement le temps entre les RNI. (par exemple : q1sem x2, puis q2sem x 2 avant de passer q4sem).  Il est important de se rappeler le délai de réponse car l'impact d'une dose de warfarine sur le RNI est décalé de 48 à 72 heures. La réponse encore plus lente chez patient âgé (vu t ½ des facteurs de",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "En debut de traitement par warfarine, demander des RNI frequemment, typiquement 2 a 3 fois par semaine, puis espacer graduellement lorsque la dose se stabilise.",
+      "requiresMonitoring": [
+        "RNI",
+        "observance",
+        "signes de saignement",
+        "facteurs modifiant le RNI"
+      ],
+      "requiresFollowUp": [
+        "RNI quotidiennement, aux 2 jours ou maximum aux 3 jours selon contexte initial",
+        "ensuite q1 semaine x2, q2 semaines x2, puis q4 semaines lorsque stabilise"
+      ],
+      "followUpInterval": "RNI 2-3 fois/semaine au debut; espacement graduel si stabilite"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-dose-depart-age",
+      "@type": "pharm:DoseAdjustmentRule",
+      "name": "Dose initiale warfarine selon age et risque",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "initiation",
+      "sourceSection": "Traitements",
+      "sourceQuote": "≤ 5 mg pour personnes âgées, dénutries, à haut risque de saignement, trouble hépatique, insuffisance cardiaque congestive ou présence interaction médicamenteuse augmentant l'efficacité de la warfarine (ex. amiodarone) et 5 mg pour les autres patients.  <!-- image -->  <!-- image -->  La dose n'est habituellement pas modifiée pour 2 doses puis un RNI est demandé. Plusieurs protocoles sont disponibles concernant l'ajustement lors d'initiation à la warfarin dont celui de UWHealth (disponible en anglais seulement, part",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Utiliser une dose initiale prudente de warfarine: ≤ 5 mg chez personnes agees, denutries, haut risque de saignement, trouble hepatique, insuffisance cardiaque congestive ou interaction augmentant la warfarine; 5 mg pour les autres patients. Chez personnes agees, une dose plus faible de 2 a 3 mg peut etre preferee.",
+      "requiresMonitoring": [
+        "RNI",
+        "saignement",
+        "interactions",
+        "fonction hepatique",
+        "insuffisance cardiaque"
+      ],
+      "requiresFollowUp": [
+        "RNI selon protocole d initiation",
+        "ajuster selon facteurs modifiant le RNI"
+      ],
+      "followUpInterval": "RNI aux 2-3 jours en ambulatoire jusqu a deux valeurs therapeutiques, puis hebdomadaire au premier mois"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-dose-charge",
+      "@type": "pharm:DoseAdjustmentRule",
+      "name": "Dose de charge warfarine",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "initiation",
+      "sourceSection": "Utilisation de dose de charge",
+      "sourceQuote": "L'utilisation de dose de charge est donc souvent non nécessaire, bien que suggérée dans certains nomogrammes. Elle se limite généralement à 2 fois la dose d'entretien estimée (pas plus que 10 mg). Les études montrent que généralement elles ne sont souvent pas très bénéfiques.  ## Effets indésirables  ## Effets indésirables les plus fréquents  - Hémorragie et saignement occulte - Troubles gastro-intestinaux - Rash - Alopécie - Syndrome de l'orteil bleu (rare)  ## Gestion des effets indésirables  | Mineurs : Épistaxi",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "La dose de charge est souvent non necessaire; si utilisee, elle se limite generalement a 2 fois la dose d entretien estimee et ne doit pas depasser 10 mg.",
+      "requiresMonitoring": [
+        "RNI",
+        "risque de saignement"
+      ],
+      "requiresFollowUp": [
+        "RNI rapproche apres initiation ou dose de charge"
+      ],
+      "followUpInterval": "RNI quotidiennement a aux 2-3 jours selon contexte"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-suivi-annuel-fsc",
+      "@type": "pharm:MonitoringParameter",
+      "name": "Suivi FSC annuel sous warfarine",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "suivi recommande",
+      "sourceSection": "Suivi recommande",
+      "sourceQuote": "Une formule sanguine est obtenue avant le début du traitement puis au moins une fois par année par la suite afin de détecter des saignements occultes.  Le RNI permet d'évaluer partiellement l'observance au traitement étant donné les nombreux facteurs pouvant faire varier le RNI. En plus de l'adhésion aux doses recommandées de warfarine lors des ajustements, le respect de la fréquence des prises de sang pour la mesure du RNI peut aussi être problématique. Il en est de même pour l'apport en vitamine K et la consommat",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Obtenir une formule sanguine avant le debut du traitement, puis au moins une fois par annee afin de detecter des saignements occultes.",
+      "requiresMonitoring": [
+        "formule sanguine complete",
+        "saignements occultes"
+      ],
+      "requiresFollowUp": [
+        "FSC avant traitement puis au moins annuellement"
+      ],
+      "followUpInterval": "annuel minimal apres valeur de base"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-rni-stable",
+      "@type": "pharm:FollowUpProtocol",
+      "name": "RNI stable - frequence de suivi",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "suivi recommande",
+      "sourceSection": "Frequence de suivis recommandes",
+      "sourceQuote": "RNI toutes les 4 semaines  ## RNI stable (le RNI se situe habituellement à lintérieur de lécart thérapeutique visé)'  RNI toutes les 4 semaines  Selon la condition clinique; RNI toutes les 4 à 12 semaines?  ## RNI instable (RNI non thérapeutique)  'Le professionnel de la santé doit aviser la personne traitée par la warfarine que la mesure du RNI doit se faire plus rapidement que selon l'intervalle prévu s'il y a des changements dans son état de santé, sa médication ou sa diète  2La mesure du RNI à des intervalles s",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Lorsque le RNI est stable et habituellement dans l ecart therapeutique vise, mesurer le RNI toutes les 4 semaines; selon la condition clinique, un intervalle de 4 a 12 semaines peut etre envisage.",
+      "requiresMonitoring": [
+        "RNI",
+        "changements etat de sante",
+        "changements medication",
+        "changements diete"
+      ],
+      "requiresFollowUp": [
+        "RNI plus rapidement si changement de sante, medication ou diete"
+      ],
+      "followUpInterval": "q4 semaines; parfois q4-12 semaines selon condition clinique"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-facteur-persistant",
+      "@type": "pharm:DoseAdjustmentRule",
+      "name": "RNI variable avec facteur persistant",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "ajustement",
+      "sourceSection": "Ajustement",
+      "sourceQuote": "modifier immédiatement la dose hebdomadaire de warfarine. - Un ajustement temporaire de la dose (dose de charge ou omission de dose, selon le RNI) peut s'ajouter (mais pas toujours) à la modification de la dose hebdomadaire. La nécessité de réaliser ou non un ajustement temporaire de la dose dépend du contexte clinique. - Lorsque la présence d'un facteur expliquant la variation du RNI ne peut pas être établie ou qu'un facteur est détecté, mais que celui-ci susceptible de persister, les recommandations contenues dan",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Si aucun facteur temporaire n explique la variation du RNI, ou si un facteur detecte est susceptible de persister, modifier immediatement la dose hebdomadaire de warfarine.",
+      "requiresMonitoring": [
+        "RNI",
+        "facteur de variation",
+        "medication interagissante"
+      ],
+      "requiresFollowUp": [
+        "appliquer le pourcentage d ajustement recommande selon le tableau applicable",
+        "evaluer besoin d ajustement temporaire selon contexte clinique"
+      ],
+      "followUpInterval": "selon prochain RNI recommande et contexte clinique"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:warfarine-hfpm-risque-eleve",
+      "@type": "pharm:FollowUpProtocol",
+      "name": "RNI sous-therapeutique et HFPM",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "ajustement",
+      "sourceSection": "RNI sous-therapeutique et HFPM",
+      "sourceQuote": "risque thromboembolique élevé, particulièrement les porteurs de valve mécanique et les personnes ayant un antécédent d'AVC, considérer l'utilisation d'une HFPM jusqu'au retour du RNI dans l'écart thérapeutique visé. - 4) Si le facteur de variation temporaire n'est pas résolu lors d'un premier résultat de RNI entre 3,01 et 3,39 ou en présence de plusieurs résultats de RNI consécutifs dans cet écart, il faut considérer de procéder à l'ajustement correspondant à un résultat entre 3,40 et 3,79. - 5) En fonction du risq",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Chez les personnes a risque thromboembolique eleve, particulierement porteurs de valve mecanique ou antecedent d AVC, considerer une HFPM jusqu au retour du RNI dans l ecart therapeutique vise.",
+      "requiresMonitoring": [
+        "RNI",
+        "risque thromboembolique",
+        "risque de saignement"
+      ],
+      "requiresFollowUp": [
+        "RNI rapproche lors HFPM ou dose de charge importante"
+      ],
+      "followUpInterval": "RNI plus rapproche que l intervalle maximal selon contexte"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:rni-supratherapeutique-3-5",
+      "@type": "pharm:DoseAdjustmentRule",
+      "name": "RNI 3 a 5 sans saignement significatif",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "rni supratherapeutique",
+      "sourceSection": "RNI supra-therapeutique",
+      "sourceQuote": "3 à 5 Sans saignement significatif              | ● Aucune dose de vitamine K recommandée ● Suivre ajustement de la dose de warfarine tel que recommandé dans l'algorithme d'ajustement (selon écart thérapeutique de RNI visé)",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Pour RNI 3 a 5 sans saignement significatif, aucune dose de vitamine K n est recommandee; suivre l ajustement de la dose de warfarine selon l algorithme applicable.",
+      "requiresMonitoring": [
+        "RNI",
+        "saignement significatif"
+      ],
+      "requiresFollowUp": [
+        "ajuster warfarine selon ecart therapeutique vise"
+      ],
+      "followUpInterval": "selon algorithme et contexte clinique"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:rni-supratherapeutique-5-9",
+      "@type": "pharm:DoseAdjustmentRule",
+      "name": "RNI 5 a 9 sans saignement significatif",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "rni supratherapeutique",
+      "sourceSection": "RNI supra-therapeutique",
+      "sourceQuote": "5 à 9 Sans saignement significatif              | Si une inversion rapide est requise: ● Administrer 1 à 2,5 mg de vitamine K per os (selon micromedex la dose de vitamine K peut aller jusqu'à 5 mg PO). ● Effet observé dans 24-48h, RNI et FSC à faire dans 24 à 48h. ● Répéter PRN une seconde dose de 1 à 2 mg de vitamine K per os. ● Suivre l'algorithme habituel pour l'ajustement de la dose de warfarine (omettre 1 à 2 dose(s) et diminuer la dose) ● Planifier une consultation médicale à court terme (rechercher la cause,",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Pour RNI 5 a 9 sans saignement significatif, si une inversion rapide est requise, administrer vitamine K 1 a 2,5 mg PO; RNI et FSC dans 24 a 48 h.",
+      "requiresMonitoring": [
+        "RNI",
+        "FSC",
+        "saignement"
+      ],
+      "requiresFollowUp": [
+        "repeter vitamine K PRN selon RNI et contexte"
+      ],
+      "followUpInterval": "24 a 48 h"
+    },
+    {
+      "@id": "urn:pharmagent:anticoag:saignements-significatifs",
+      "@type": "pharm:ReferralCriterion",
+      "name": "Signes de saignements significatifs",
+      "sourceDocument": {
+        "@id": "urn:pharmagent:anticoag:doc"
+      },
+      "sourcePage": "saignements",
+      "sourceSection": "Type de saignements",
+      "sourceQuote": "Saignements significatifs     | s/s de saignements intra-abdominaux : douleurs abdominales sévères de cause inconnue. s/s de saignements GI : sang rouge vif dans les selles , méléna (selles noires), vomissements brunâtres (grains de café). s/s de saignements intra-cérébraux : no/vo, céphalées sévères et soudaines, confusion, diaphorèse, évanouissement. Saignements externes importants et persistants : Hématurie, hémoptysie | | Saignements non-significatifs | Épistaxis bref, ecchymoses, saignements des gencives.",
+      "confidence": 0.82,
+      "needsHumanReview": true,
+      "reviewStatus": "human_review",
+      "publishStatus": "ready_for_working_memory",
+      "recommendation": "Identifier comme significatifs les signes de saignement intra-abdominal, gastro-intestinal, intracerebral ou externe important et persistant.",
+      "hasReferralCriterion": [
+        "douleurs abdominales severes inexpliquees",
+        "sang rouge vif dans les selles",
+        "melena",
+        "vomissements brunatres",
+        "cephalees severes et soudaines",
+        "confusion",
+        "evanouissement",
+        "hematurie",
+        "hemoptysie"
+      ],
+      "requiresFollowUp": [
+        "reference urgente selon presentation clinique"
+      ],
+      "followUpInterval": "immediat si signes significatifs"
+    }
+  ]
+}

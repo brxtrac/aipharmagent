@@ -1,0 +1,5 @@
+docling
+openai
+pydantic>=2
+jsonschema
+numpy
