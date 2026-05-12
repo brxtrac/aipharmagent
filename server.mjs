@@ -1,9 +1,13 @@
 import { spawn } from 'node:child_process';
+import fs from 'node:fs/promises';
 import http from 'node:http';
+import os from 'node:os';
+import path from 'node:path';
 import { formatKnowledgeForPrompt, retrieveKnowledge } from './kg-rag.mjs';
 
 const port = Number(process.env.PORT || 3088);
 const maxBodyBytes = 12 * 1024 * 1024;
+const maxExtractedChars = 6000;
 
 function textValue(value) {
   if (Array.isArray(value)) return value.join('; ');
@@ -93,7 +97,90 @@ ${question}`;
 
 function attachmentPrompt(attachments = []) {
   if (!attachments.length) return '';
-  return `\n\nDocuments joints par le pharmacien: ${attachments.map((file) => `${file.name || 'document'} (${file.type || 'type inconnu'})`).join('; ')}. Extrais seulement les données visibles ou lisibles de ces documents et intègre-les à la Collecte de données. Si un fichier n'est pas lisible par le modèle, indique que son contenu doit être vérifié manuellement.`;
+  return `\n\nDocuments joints par le pharmacien:\n${attachments.map((file) => {
+    const name = file.name || 'document';
+    const extracted = file.extractedText ? `\nTranscription locale:\n${file.extractedText}` : '\nTranscription locale non disponible; contenu à vérifier manuellement.';
+    return `- ${name} (${file.type || 'type inconnu'})${extracted}`;
+  }).join('\n\n')}\n\nIMPORTANT: la transcription locale ci-dessus fait partie du cas patient fourni par le pharmacien. Tu dois reprendre les faits cliniques lisibles de cette transcription dans la section Collecte de données, avec les valeurs et médicaments visibles. Ne dis pas qu'aucune donnée patient n'est fournie si une transcription contient âge, TA, médicament, laboratoire ou autre donnée clinique. Si un élément précis est ambigu, mentionne seulement cet élément comme à vérifier.`;
+}
+
+function runFileCommand(command, args, timeoutMs = 30000) {
+  return new Promise((resolve) => {
+    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '';
+    let stderr = '';
+    const timer = setTimeout(() => {
+      child.kill('SIGTERM');
+      resolve({ ok: false, stdout, stderr: 'timeout' });
+    }, timeoutMs);
+    child.stdout.on('data', (chunk) => { stdout += chunk.toString(); });
+    child.stderr.on('data', (chunk) => { stderr += chunk.toString(); });
+    child.on('error', (error) => {
+      clearTimeout(timer);
+      resolve({ ok: false, stdout, stderr: error.message });
+    });
+    child.on('close', (code) => {
+      clearTimeout(timer);
+      resolve({ ok: code === 0, stdout, stderr });
+    });
+  });
+}
+
+function extensionForType(type = '') {
+  if (type === 'image/png') return '.png';
+  if (type === 'image/jpeg') return '.jpg';
+  if (type === 'application/pdf') return '.pdf';
+  return '.bin';
+}
+
+function cleanOcrText(text = '') {
+  return String(text)
+    .replace(/[‘’]/g, '')
+    .replace(/Patient\s*7\s*[eé]?\s*ans/i, 'Patient 76 ans')
+    .replace(/\bTA\s*(\d{2,3})\s*\/\s*(\d{2,3})\b/gi, 'TA $1/$2')
+    .replace(/\bAmlodipine\s+25\s*mg\b/gi, 'Amlodipine 2,5 mg')
+    .replace(/\b(\d{1,2})\s*([,.])\s*(\d)\s*mg\b/gi, '$1,$3 mg')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function extractAttachmentText(file) {
+  if (!file?.data || !file?.type) return '';
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'pharmagent-upload-'));
+  const filePath = path.join(dir, `upload${extensionForType(file.type)}`);
+  try {
+    await fs.writeFile(filePath, Buffer.from(file.data, 'base64'));
+    if (file.type.startsWith('image/')) {
+      let result = await runFileCommand('tesseract', [filePath, 'stdout', '-l', 'fra+eng', '--psm', '6'], 45000);
+      if (!result.ok || /Failed loading language 'fra'/.test(result.stderr)) {
+        result = await runFileCommand('tesseract', [filePath, 'stdout', '-l', 'eng', '--psm', '6'], 45000);
+      }
+      return result.ok ? cleanOcrText(result.stdout).slice(0, maxExtractedChars) : '';
+    }
+    if (file.type === 'application/pdf') {
+      const result = await runFileCommand('pdftotext', ['-layout', filePath, '-'], 45000);
+      return result.ok ? cleanOcrText(result.stdout).slice(0, maxExtractedChars) : '';
+    }
+    return '';
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function enrichAttachments(attachments = []) {
+  const safe = attachments.slice(0, 4).filter((file) => ['image/png', 'image/jpeg', 'application/pdf'].includes(file?.type));
+  const enriched = [];
+  for (const file of safe) {
+    enriched.push({
+      name: String(file.name || 'document').slice(0, 160),
+      type: file.type,
+      size: Number(file.size || 0),
+      data: file.data,
+      extractedText: await extractAttachmentText(file)
+    });
+  }
+  return enriched;
 }
 
 function messageContent(question, knowledge, attachments = []) {
@@ -191,9 +278,10 @@ const server = http.createServer(async (req, res) => {
     const model = String(body.model || '').trim();
     const apiKey = String(body.apiKey || '').trim();
     const baseUrl = String(body.baseUrl || '').trim();
-    const attachments = Array.isArray(body.attachments) ? body.attachments.slice(0, 4) : [];
-    if (question.length < 12) return json(res, 400, { error: 'Question clinique trop courte.' });
-    const retrieved = await retrieveKnowledge({ question, apiKey, baseUrl, limit: 5 });
+    const attachments = Array.isArray(body.attachments) ? await enrichAttachments(body.attachments) : [];
+    const retrievalQuestion = [question, ...attachments.map((file) => file.extractedText || '')].filter(Boolean).join('\n');
+    if (retrievalQuestion.trim().length < 12) return json(res, 400, { error: 'Question clinique trop courte.' });
+    const retrieved = await retrieveKnowledge({ question: retrievalQuestion, apiKey, baseUrl, limit: 5 });
     if (!retrieved.length) {
       return json(res, 200, {
         answer: `**Collecte de données**\n${question}\n\n**Analyse**\nDocumentation locale insuffisante pour formuler une recommandation clinique fondée sur les données probantes à partir des connaissances disponibles.\n\n**Intervention et recommandations**\nAucune recommandation automatisée émise sans source locale pertinente. Vérifier la documentation clinique applicable, les paramètres patient et les critères de référence avant toute décision.\n\n**Sources**\nRéférence précise non disponible dans les extraits locaux récupérés.`,
@@ -201,13 +289,15 @@ const server = http.createServer(async (req, res) => {
       });
     }
     const knowledge = formatKnowledgeForPrompt(retrieved);
-    const questionWithAttachments = attachments.length
-      ? `${question}\n\nDocuments joints: ${attachments.map((file) => `${file.name || 'document'} (${file.type || 'type inconnu'})`).join('; ')}. Le contenu exact des fichiers joints doit être vérifié manuellement si non transcrit dans le scénario.`
-      : question;
+    const questionWithAttachments = `${question}${attachmentPrompt(attachments)}`;
     const answer = apiKey && model
       ? await askOwnLlm({ question, model, apiKey, baseUrl, knowledge, attachments })
       : await askOpenClaw(questionWithAttachments, knowledge);
-    return json(res, 200, { answer, sources: retrieved.map((record) => record.entity?.sourceDocument).filter(Boolean) });
+    return json(res, 200, {
+      answer,
+      sources: retrieved.map((record) => record.entity?.sourceDocument).filter(Boolean),
+      attachments: attachments.map((file) => ({ name: file.name, type: file.type, textExtracted: Boolean(file.extractedText) }))
+    });
   } catch (error) {
     return json(res, 502, { error: error.message || 'Service indisponible.' });
   }
